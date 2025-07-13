@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeCut - Editor de Vídeos Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>FreeCut</h1>
+            <p class="subtitle">Corte seus vídeos com precisão profissional</p>
+        </header>
+
+        <div class="upload-area" id="uploadArea">
+            <input type="file" id="videoInput" accept="video/*" style="display: none;">
+            <div class="drop-zone" id="dropZone">
+                <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" alt="Upload" class="upload-icon">
+                <p>Arraste seu vídeo aqui ou clique para selecionar</p>
+                <button class="upload-btn" onclick="document.getElementById('videoInput').click()">Selecionar Vídeo</button>
+            </div>
+        </div>
+
+        <div class="editor-area" id="editorArea" style="display: none;">
+            <div class="video-preview">
+                <video id="videoPlayer" controls></video>
+            </div>
+
+            <div class="timeline-container">
+                <div class="timeline-header">
+                    <div class="time-display">
+                        <span id="currentTime">00:00:00</span> / <span id="totalTime">00:00:00</span>
+                    </div>
+                    <div class="zoom-control">
+                        <button id="zoomOut">-</button>
+                        <span id="zoomLevel">100%</span>
+                        <button id="zoomIn">+</button>
+                    </div>
+                </div>
+
+                <div class="timeline" id="timeline">
+                    <div class="thumbnails" id="thumbnails"></div>
+                    <div class="progress-bar">
+                        <div class="progress" id="progress"></div>
+                        <div class="playhead" id="playhead"></div>
+                    </div>
+                    <div class="markers">
+                        <div class="start-marker" id="startMarker"></div>
+                        <div class="end-marker" id="endMarker"></div>
+                    </div>
+                </div>
+
+                <div class="frame-controls">
+                    <button id="prevFrame">Anterior</button>
+                    <input type="number" id="frameInput" min="0" value="0">
+                    <button id="nextFrame">Próximo</button>
+                </div>
+
+                <div class="quick-actions">
+                    <button id="trimStart">Cortar Início (30s)</button>
+                    <button id="trimEnd">Cortar Final (30s)</button>
+                </div>
+            </div>
+
+            <div class="export-options">
+                <button id="exportMP4">Exportar MP4</button>
+                <button id="exportGIF">Exportar GIF</button>
+            </div>
+        </div>
+
+        <footer>
+            <p>FreeCut - Editor de Vídeos Online Profissional</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
