@@ -3,60 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FreeCut</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <title>FreeCut - Editor de Vídeo Online</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <header>
+        <div class="header">
             <h1>FreeCut</h1>
-            <p class="subtitle">Corte seus vídeos com precisão</p>
-        </header>
+            <p>Editor de vídeo online com precisão frame a frame</p>
+        </div>
 
-        <div class="upload-area" id="uploadArea">
-            <input type="file" id="videoInput" accept="video/*" style="display: none;">
-            <div class="drop-zone" id="dropZone">
-                <img src="https://cdn-icons-png.flaticon.com/512/685/685655.png" alt="Upload" class="upload-icon">
-                <p>Arraste seu vídeo aqui ou clique para selecionar</p>
-                <button class="upload-btn" onclick="document.getElementById('videoInput').click()">Selecionar Vídeo</button>
+        <!-- Upload Section -->
+        <div class="card upload-card">
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-icon">🎬</div>
+                <h3>Arraste seu vídeo aqui ou clique para selecionar</h3>
+                <p>Formatos suportados: MP4, AVI, MOV, WebM</p>
+                <input type="file" id="videoFile" accept="video/*" style="display: none;">
+                <button class="btn" onclick="document.getElementById('videoFile').click()">
+                    Selecionar Vídeo
+                </button>
             </div>
         </div>
 
-        <div class="editor-area" id="editorArea" style="display: none;">
-            <div class="video-preview">
-                <video id="videoPlayer" controls></video>
-            </div>
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processando vídeo e gerando frames...</p>
+        </div>
 
-            <div class="timeline-container">
-                <div class="timeline" id="timeline">
-                    <canvas id="waveform" height="60"></canvas>
-                    <div class="thumbnails" id="thumbnails"></div>
-                    <div class="progress-bar">
-                        <div class="progress" id="progress"></div>
-                        <div class="playhead" id="playhead"></div>
+        <!-- Editor Section -->
+        <div class="editor-section" id="editorSection">
+            <div class="card">
+                <div class="video-preview">
+                    <video id="videoPlayer" preload="metadata"></video>
+                </div>
+
+                <div class="timeline-container">
+                    <div class="timeline-zoom">
+                        <span>Zoom:</span>
+                        <input type="range" class="zoom-slider" id="zoomSlider" min="100" max="300" value="100">
+                        <span id="zoomValue">100%</span>
                     </div>
-                    <div class="markers">
-                        <div class="start-marker" id="startMarker"></div>
-                        <div class="end-marker" id="endMarker"></div>
+
+                    <div class="thumbnails-wrapper">
+                        <div class="thumbnails-container" id="thumbnailsContainer">
+                            <!-- Thumbnails serão gerados aqui -->
+                        </div>
+                    </div>
+
+                    <div class="timeline-track" id="timelineTrack">
+                        <div class="timeline-progress" id="timelineProgress"></div>
+                        <div class="timeline-marker" id="timelineMarker"></div>
+                        <div class="cut-markers" id="cutMarkers"></div>
+                    </div>
+
+                    <div class="time-display">
+                        <span id="currentTime">00:00</span> / <span id="totalTime">00:00</span>
                     </div>
                 </div>
 
-                <div class="quick-actions">
-                    <button id="setStart">Definir Início</button>
-                    <button id="setEnd">Definir Fim</button>
-                    <button id="exportMP4">Exportar MP4</button>
+                <div class="controls">
+                    <div class="frame-control">
+                        <button class="frame-btn" id="prevFrameBtn">◀</button>
+                        <input type="number" class="frame-input" id="frameInput" placeholder="Frame" min="0">
+                        <span class="frame-total">/ <span id="totalFrames">0</span></span>
+                        <button class="frame-btn" id="nextFrameBtn">▶</button>
+                    </div>
+                    
+                    <button class="btn btn-secondary" id="playPauseBtn">▶ Play</button>
+                    <button class="btn btn-secondary" id="setStartBtn">📍 Marcar Início</button>
+                    <button class="btn btn-secondary" id="setEndBtn">📍 Marcar Fim</button>
+                    <button class="btn btn-secondary" id="clearMarksBtn">🗑️ Limpar</button>
+                </div>
+
+                <div class="quick-cuts">
+                    <button class="btn btn-secondary" id="cut30sStart">Cortar 30s do Início</button>
+                    <button class="btn btn-secondary" id="cut30sEnd">Cortar 30s do Final</button>
+                    <button class="btn btn-secondary" id="cut60sStart">Cortar 60s do Início</button>
+                    <button class="btn btn-secondary" id="cut60sEnd">Cortar 60s do Final</button>
                 </div>
             </div>
 
-            <div class="processing" id="processing" style="display: none;">
-                <div class="loader"></div>
-                <p>Processando vídeo...</p>
+            <div class="card export-section">
+                <h3>Exportar Vídeo</h3>
+                <div class="export-info">
+                    <p>Início: <span id="startTimeDisplay">00:00</span> | Fim: <span id="endTimeDisplay">00:00</span></p>
+                    <p>Duração do corte: <span id="cutDurationDisplay">00:00</span></p>
+                </div>
+                <div class="export-options">
+                    <button class="format-btn active" data-format="mp4">MP4</button>
+                    <button class="format-btn" data-format="gif">GIF</button>
+                    <button class="format-btn" data-format="webm">WebM</button>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="exportProgress"></div>
+                </div>
+                <button class="btn" id="exportBtn">🎬 Exportar Vídeo</button>
+                <div class="export-result" id="exportResult"></div>
             </div>
         </div>
     </div>
 
+    <!-- Canvas oculto para captura de frames -->
+    <canvas id="thumbnailCanvas" style="display: none;"></canvas>
+
     <script src="script.js"></script>
 </body>
-</html>
+                        </html>
